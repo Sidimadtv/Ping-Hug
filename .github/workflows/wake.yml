@@ -1,24 +1,24 @@
-name: Wake Up My Spaces
+name: Wake Up Sports Spaces
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Runs every 6 hours
-  workflow_dispatch:      # Allows you to click a button to run it manually
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Spaces
+      - name: Ping All 5 Spaces
         run: |
           URLS=(
-            "https://sidimadt-pro-snrt.hf.space/"
-            "https://user-space2.hf.space"
-            "https://user-space3.hf.space"
-            "https://user-space4.hf.space"
-            "https://user-space5.hf.space"
+            "https://sidimadt-pro-snrt.hf.space"
+            "https://sidimadt-pro-alkass.hf.space"
+            "https://sidimadt-pro-ksa.hf.space"
+            "https://sidimadt-my-dubai-proxy.hf.space"
+            "https://sidimadt-pro-ssc.hf.space"
           )
           for url in "${URLS[@]}"; do
-            echo "Requesting $url"
+            echo "Checking $url..."
             curl -Is "$url" | head -n 1
           done
