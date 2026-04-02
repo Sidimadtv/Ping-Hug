@@ -12,7 +12,7 @@ jobs:
       - name: Ping Spaces
         run: |
           URLS=(
-            "https://user-space1.hf.space"
+            "https://sidimadt-pro-snrt.hf.space/"
             "https://user-space2.hf.space"
             "https://user-space3.hf.space"
             "https://user-space4.hf.space"
