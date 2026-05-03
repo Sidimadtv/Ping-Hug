@@ -1,9 +1,9 @@
-name: Wake Up Sports Spaces
+name: Wake Up & Dashboard
 
 on:
   schedule:
-    - cron: '0 */3 * * *' # Pings every 3 hours
-  workflow_dispatch:      # Manual trigger
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -15,10 +15,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Ping All Spaces
+      - name: Ping and Build Dashboard
         run: |
           URLS=(
-             "https://sidimadtv-pro-snrt.hf.space"
+            "https://sidimadtv-pro-snrt.hf.space"
             "https://sidimadtv-pro-alkass.hf.space"
             "https://sidimadtv-pro-ksa.hf.space"
             "https://sidimadtv-pro-dubai.hf.space"
@@ -28,27 +28,46 @@ jobs:
             "https://sidim-mycdrm.hf.space"
             "https://sidim-core-proxy.hf.space"
           )
+          
+          # Create HTML structure
+          echo "<html><head><title>Spaces Status</title>" > index.html
+          echo "<meta name='viewport' content='width=device-width, initial-scale=1'>" >> index.html
+          echo "<style>
+            body{font-family:-apple-system,sans-serif; background:#0f172a; color:white; text-align:center; padding:20px;}
+            .grid{display:flex; flex-wrap:wrap; justify-content:center; gap:15px; margin-top:20px;}
+            .card{background:#1e293b; padding:20px; border-radius:12px; width:280px; border:1px solid #334155;}
+            .online{color:#4ade80; font-weight:bold;}
+            .offline{color:#f87171; font-weight:bold;}
+            .url{font-size:0.8em; color:#94a3b8; word-break:break-all;}
+            .time{color:#64748b; font-size:0.9em;}
+          </style>" >> index.html
+          echo "</head><body>" >> index.html
+          echo "<h1>🚀 Spaces Monitor</h1>" >> index.html
+          echo "<p class='time'>Last heartbeat: $(date)</p>" >> index.html
+          echo "<div class='grid'>" >> index.html
+
           for url in "${URLS[@]}"; do
-            echo "Checking $url..."
-            curl -Is -L --max-time 10 "$url" > /dev/null && echo "Success!" || echo "Failed!"
+            STATUS=$(curl -o /dev/null -s -w "%{http_code}" -L --max-time 10 "$url")
+            
+            if [ "$STATUS" = "200" ] || [ "$STATUS" = "301" ] || [ "$STATUS" = "302" ]; then
+              echo "<div class='card'><span class='online'>● ONLINE</span><br><div class='url'>$url</div></div>" >> index.html
+            else
+              echo "<div class='card'><span class='offline'>○ OFFLINE ($STATUS)</span><br><div class='url'>$url</div></div>" >> index.html
+            fi
           done
 
-      - name: Self-Commit (Only on the 1st of each month)
+          echo "</div></body></html>" >> index.html
+          
+          # Update heartbeat.txt too
+          date > heartbeat.txt
+
+      - name: Deploy and Keep Alive
         run: |
-          # %d extracts the day of the month (01, 02, etc.)
-          if [ "$(date +%d)" = "01" ]; then
-            echo "It is the 1st of the month. Refreshing activity..."
-            date > heartbeat.txt
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add heartbeat.txt
-            git commit -m "Monthly keep-alive to prevent workflow suspension"
-            git push
-          else
-            echo "Today is day $(date +%d). Skipping commit to keep history clean."
-          fi
-
-
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html heartbeat.txt
+          git commit -m "Heartbeat & Dashboard Update: $(date)" || echo "No changes"
+          git push
 
 
 
