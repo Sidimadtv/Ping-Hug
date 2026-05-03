@@ -18,11 +18,11 @@ jobs:
             "https://sidimadtv-pro-alkass.hf.space"
             "https://sidimadtv-pro-ksa.hf.space"
             "https://sidimadtv-pro-dubai.hf.space"
-           "https://sidimadtv-cors-proxy.hf.space"
+            "https://sidimadtv-cors-proxy.hf.space"
             "https://sidimadtv-cdrm.hf.space"
             "https://bysidimad-cdrm.hf.space"
-        "https://sidim-mycdrm.hf.space"
-          "https://sidim-core-proxy.hf.space"
+            "https://sidim-mycdrm.hf.space"
+            "https://sidim-core-proxy.hf.space"
           )
           for url in "${URLS[@]}"; do
             echo "Checking $url..."
