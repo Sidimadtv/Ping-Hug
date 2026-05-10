@@ -27,6 +27,7 @@ jobs:
             "https://bysidimad-cdrm.hf.space"
             "https://sidim-mycdrm.hf.space"
             "https://sidim-core-proxy.hf.space"
+            "https://sidim-cdrm-proxy.hf.space"
           )
           
           # Force the timezone to Morocco/Casablanca for the dashboard display
